@@ -1,17 +1,28 @@
 import time, sys, base64
 sys.stdout=open('output_010.out', 'w', encoding='utf8')
-def search(x, seq):
-    if len(seq) == 0:
-        return False
-    else:     
-        for i in range(len(seq)):
-            if x < seq[i]:
-                return i
-            elif seq[i] == seq[-1] and seq[i]<x:
-                return i+1
-            elif seq[i]<x<=seq[i+1]:
-                return i+1    
-        
-
+def search ( x , lst1 ) :
+    lst = list ( lst1 )
+    if ( lst == [ ] ) :
+        if True :
+            lst . append ( x )
+        elif ( x > lst1 [ ( length - 1 ) ] ) :
+            pass
+    else :
+        pass
+        for i in range ( len ( lst ) ) :
+            pass
+            if ( x < lst [ i ] ) :
+                lst . insert ( i , x )
+            else :
+                lst . insert ( len ( lst ) , x )
+            pass
+        pass
+    pass
+    for i in range ( len ( lst ) ) :
+        pass
+        if ( lst [ i ] == x ) :
+            return i
+        pass
+    pass
 print(search(100, [])
 )

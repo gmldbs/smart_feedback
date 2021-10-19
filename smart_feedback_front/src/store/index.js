@@ -7,11 +7,15 @@ export default new Vuex.Store({
   state: {
     user: null,
     isAdmin: null,
+    user_name: null,
+    student_id: null,
   },
   mutations: {
     setUser(state, payload) {
       state.user = payload.email
       state.isAdmin = payload.isAdmin
+      state.user_name = payload.user_name
+      state.student_id = payload.student_id
     }
   },
   actions: {

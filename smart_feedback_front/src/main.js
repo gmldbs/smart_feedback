@@ -14,6 +14,8 @@ import 'vue-material/dist/theme/default.css'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import VueFirestore from 'vue-firestore'
+import VueLazyload from "vue-lazyload"
+import CKEditor from 'ckeditor4-vue';
 
 //import 'firebase/firestore'
 const firebaseConfig = {
@@ -31,7 +33,8 @@ firebase.initializeApp(firebaseConfig)
 Vue.use(BootstrapVue)
 Vue.use(VueMaterial)
 Vue.use(VueFirestore)
-
+Vue.use(VueLazyload)
+Vue.use(CKEditor)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 //Vue.prototype.$db = firebase.firestore()
