@@ -34,7 +34,7 @@
                   <p class="text-h4 text--primary">
                     {{lecture.lecture_name}}
                   </p>
-                  <p>Professor {{$store.state.user_name}}</p>
+                  <p>Professor {{lecture.admin_name}}</p>
                   <div class="text--primary">
                     {{lecture.lecture_description}}
                   </div>
@@ -133,11 +133,116 @@
                                     cols="12"
                                     md="12"
                                   >
-                                    <v-text-field
-                                      class="purple-input"
-                                      label="Lecture Discription"
+                                    <v-textarea
                                       v-model="selected_lecture.lecture_description"
-                                    />
+                                      auto-grow
+                                      filled
+                                      label="Lecture Discription"
+                                      rows="1"
+                                    ></v-textarea>
+                                  </v-col>
+                                  <v-col cols="12" md="12">
+                                    <v-data-table
+                                      :headers="student_header"
+                                      :items="selected_lecture.students"
+                                      class="elevation-1"
+                                    >
+                                      <template v-slot:top>
+                                        <v-toolbar
+                                          flat
+                                        >
+                                          <v-toolbar-title>Students Info</v-toolbar-title>
+                                          <v-divider
+                                            class="mx-4"
+                                            inset
+                                            vertical
+                                          ></v-divider>
+                                          <v-spacer></v-spacer>
+                                          <v-dialog
+                                            v-model="editedDialog"
+                                            max-width="500px"
+                                          >
+                                            <template v-slot:activator="{ on, attrs }">
+                                              <v-btn
+                                                color="primary"
+                                                dark
+                                                class="mb-2"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                              >
+                                                Add students
+                                              </v-btn>
+                                            </template>
+                                            <v-card>
+                                              <v-card-title>
+                                                <span class="text-h5">Student ID</span>
+                                              </v-card-title>
+
+                                              <v-card-text>
+                                                <v-container>
+                                                  <v-row>
+                                                    <v-col
+                                                      cols="12"
+                                                      sm="6"
+                                                      md="4"
+                                                    >
+                                                      <v-text-field
+                                                        v-model="edited_item.student_id"
+                                                        label="Student ID"
+                                                      ></v-text-field>
+                                                    </v-col>
+                                                  </v-row>
+                                                </v-container>
+                                              </v-card-text>
+
+                                              <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn
+                                                  color="blue darken-1"
+                                                  text
+                                                  @click="closeEditDialog"
+                                                >
+                                                  Cancel
+                                                </v-btn>
+                                                <v-btn
+                                                  color="blue darken-1"
+                                                  text
+                                                  @click="save"
+                                                >
+                                                  Save
+                                                </v-btn>
+                                              </v-card-actions>
+                                            </v-card>
+                                          </v-dialog>
+                                          <v-dialog v-model="dialogDelete" max-width="500px">
+                                            <v-card>
+                                              <v-card-title class="text-h5">Are you sure you want to delete this student ID?</v-card-title>
+                                              <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                                                <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                                <v-spacer></v-spacer>
+                                              </v-card-actions>
+                                            </v-card>
+                                          </v-dialog>
+                                        </v-toolbar>
+                                      </template>
+                                      <template v-slot:[`item.actions`]="{ item }" ]>
+                                        <v-icon
+                                          small
+                                          class="mr-2"
+                                          @click="openEditDialog(item)"
+                                        >
+                                          mdi-pencil
+                                        </v-icon>
+                                        <v-icon
+                                          small
+                                          @click="deleteItem(item)"
+                                        >
+                                          mdi-delete
+                                        </v-icon>
+                                      </template>
+                                    </v-data-table>
                                   </v-col>
                                   <v-col
                                     cols="12"
@@ -197,10 +302,26 @@ export default {
             value: 'due_date'
         }
     ],
+    student_header: [
+      {
+        text: 'Student_id',
+        align: 'start',
+      },
+      { text: 'Actions', value: 'actions', sortable: false }
+    ],
+    student_dialog: false,
+    student_overlay: false,
     dialog: false,
     overlay: false,
     selected_lecture: {},
-    selected_lecture_key : ''
+    selected_lecture_key : '',
+    edited_item : {},
+    edited_idx : 0,
+    editedDialog: false,
+    delete_idx : 0,
+    deletedDialog: false,
+    dialogDelete: false,
+
   }),
   firestore () {
     return {
@@ -232,6 +353,7 @@ export default {
     create_lecture() {
       this.overlay = true
       this.selected_lecture['admin'] = this.$store.state.user
+      this.selected_lecture['admin_name'] = this.$store.state.user_name
       this.$firebase.firestore().collection('Lectures').add(this.selected_lecture).then((doc) => {
           console.log("Document written with ID: ", doc.id);
           this.overlay = false
@@ -244,7 +366,27 @@ export default {
           alert("Create Fail..!")
           this.closeDialog()
       })
-    }
+    },
+    openEditDialog(item) {
+      this.edited_item = item
+      this.edited_idx = this.selected_lecture.students.indexOf(item)
+      this.editedDialog = true
+    },
+    closeEditDialog () {
+      this.edited_item = {}
+      this.edited_dialog = false
+    },
+    save () {
+      this.selected_lecture.students[this.edited_idx] = this.edited_item
+      this.editedDialog = false
+    },
+    closeDelete() {
+      this.deleteDialog = false
+    },
+    deleteItemConfirm () {
+      this.selected_lecture.students.splice(this.edited_idx, 1)
+      this.deleteDialog = false
+    },
   },
   watch: {
   }

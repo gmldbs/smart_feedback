@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container style="padding:0%;">
         <v-row>
             <v-col cols="18">
                 <div class="d-flex align-center">
@@ -90,15 +90,14 @@ export default {
       { title: 'Sing Up', link: '/signup' },
     ],
     session_items: [
-      { title: 'My page', link: '/'},
+      { title: 'My page', link: '/my_page'},
       { title: 'Log Out', link: '/log_out'},
-      { title: 'Problem List', link:'/problem_list'}
     ],
     admin_items: [
       { title: 'Upload problem', link: '/upload_problem'},
-      { title: 'Manage problem', link: '/manage_problem'},
+      { title: 'Manage problem', link: '/problem_lecture_list'},
+      { title: 'Manage Lecture', link: '/lecture_list'},
       { title: 'Log Out', link: '/log_out'},
-      { title: 'Firebase Test', link: '/firebase_test'},
     ]
   }),
   methods: {

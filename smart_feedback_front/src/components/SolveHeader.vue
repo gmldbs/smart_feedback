@@ -1,5 +1,4 @@
 <template>
-    <div class="background">
     <v-container>
         <v-row>
             <v-col cols="18">
@@ -16,7 +15,6 @@
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
                             text
-                            color="white"
                             v-bind="attrs"
                             v-on="on"
                             style="margin-left: 10%"
@@ -41,7 +39,6 @@
                 <template v-slot:activator="{ on, attrs }">
                 <v-btn 
                     icon
-                    color="white"
                     v-bind="attrs"
                     v-on="on"
                 >
@@ -78,37 +75,11 @@
             </v-menu>
             </v-col>
         </v-row>
+        <hr>
     </v-container>
-    <v-container>
-        <v-row class="text-center">
-        <v-col cols="12" style="margin-top:10%">
-            <v-img
-            :src="require('../assets/skku_logo.png')"
-            class="my-3"
-            contain
-            height="200"
-            />
-        </v-col>
-
-        <v-col class="mb-4">
-            <h1 class="display-2 font-weight-bold mb-3" style="color:white">
-            Welcome to Smart Feedback System
-            </h1>
-
-            <p class="subheading font-weight-regular" style="color:white">
-            This is SKKU Smart Feedback System,
-            <br> You can join us
-            <a
-                href="https://cs.skku.edu/ko/"
-                target="_blank"
-            >SKKU Software</a>
-            </p>
-        </v-col>
-        </v-row>
-    </v-container>
-    </div>
 </template>
 <script>
+
 export default {
   data: () => ({
     items: [
@@ -119,14 +90,15 @@ export default {
       { title: 'Sing Up', link: '/signup' },
     ],
     session_items: [
-      { title: 'My page', link: '/my_page'},
+      { title: 'My page', link: '/'},
       { title: 'Log Out', link: '/log_out'},
+      { title: 'Problem List', link:'/problem_list'}
     ],
     admin_items: [
       { title: 'Upload problem', link: '/upload_problem'},
-      { title: 'Manage problem', link: '/problem_lecture_list'},
-      { title: 'Manage Lecture', link: '/lecture_list'},
+      { title: 'Manage problem', link: '/manage_problem'},
       { title: 'Log Out', link: '/log_out'},
+      { title: 'Firebase Test', link: '/firebase_test'},
     ]
   }),
   methods: {
@@ -141,10 +113,3 @@ export default {
   },
 };
 </script>
-<style>
-.background {
-  min-height:100vh;
-  background-image: linear-gradient(to left, #434343 0%, black 100%);
-  background-size:cover;
-}
-</style>

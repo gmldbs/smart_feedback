@@ -13,6 +13,7 @@ import StudentProblemList from '../views/Problem/StudentProblemList.vue'
 import LectureList from '../views/Lecture/LectureList.vue'
 import StudentLectureList from '../views/Lecture/StudentLectureList.vue'
 import ProblemLectureList from '../views/Lecture/ProblemLectureList.vue'
+import Solve from '../views/Problem/Solve.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -95,9 +96,13 @@ const routes = [
     component: () => import('../views/test.vue')
   },
   {
-    path: '/firebase_test',
-    name: 'firebase_test',
-    component: () => import('../views/FirebaseTest.vue')    
+    path: '/solve/:problem_key',
+    name: 'Solve Problem',
+    components: {
+      header: AppHeader,
+      default: Solve,
+      footer: AppFooter
+    }
   },
   {
     path: '/problem_list/:lecture_key',

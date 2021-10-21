@@ -64,7 +64,8 @@
             three-line
             subheader
             >
-            <v-subheader>Update Problem Informatin</v-subheader>
+            <v-subheader v-if="type">Update Problem Informatin</v-subheader>
+            <v-subheader v-else>Create Problem Informatin</v-subheader>
             <v-list-item>
                 <v-list-item-content>
                     <v-container
@@ -72,7 +73,8 @@
                       fluid
                       tag="section"
                     >
-                      <h3>Update Problem Information</h3>
+                      <h3 v-if="type">Update Problem Information</h3>
+                      <h3 v-else>Create Problem Information</h3>
                       <v-row justify="center">
                         <v-col
                           cols="12"
@@ -92,124 +94,79 @@
                                         <v-btn style="width:20%" text @click="exist_check">Check problem name</v-btn>
                                     </v-row>
                                     </v-container>
-                                <div>
-                                    <h5> Upload reference File </h5>
+                                    <div style="display:flex;">
+                                        <div style="width:48%;float:left">
+                                <h5> Upload reference File </h5>
                                     <div class="file-upload">
                                         <v-file-input
                                         counter
                                         multiple
                                         show-size
-                                        style="width:50%"
                                         v-model="reference_files"
                                         ></v-file-input>
                                     </div>
-                                    <v-simple-table v-if="reference_files.length !== 0">
-                                    <template v-slot:default>
-                                    <thead>
-                                        <tr>
-                                        <th class="text-left">
-                                            #
-                                        </th>
-                                        <th class="text-left">
-                                            File Name
-                                        </th>
-                                        <th class="text-left">
-                                            File Size
-                                        </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr
-                                        v-for="(file,i) in reference_show_files"
-                                        :key = i
-                                        >
-                                        <td> {{file.idx}} </td>
-                                        <td>{{ file.name }}</td>
-                                        <td>{{ conv_size(file.size) }}</td>
-                                        </tr>
-                                    </tbody>
+                                    <v-text-field
+                                        v-model="reference_search"
+                                        append-icon="mdi-magnify"
+                                        label="Search"
+                                        single-line
+                                        hide-details
+                                        v-if="reference_files.length !== 0"
+                                    ></v-text-field>
+                                    <v-data-table  :headers="file_headers" :items="reference_file_list" :search="reference_search" v-if="reference_files.length !== 0">
+                                    <template v-slot:[`item.size`]="{ item }" ]>
+                                        {{conv_size(item.size)}}
                                     </template>
-                                </v-simple-table>
-                                <div class="text-center" style="width:100%" v-if="reference_files.length !== 0">
-                                        <v-container>
-                                        <v-row justify="center">
-                                            <v-col cols="8">
-                                            <v-container>
-                                                <v-pagination
-                                                v-model="reference_page"
-                                                class="my-4"
-                                                :length="Math.ceil(reference_files.length / 10)"
-                                                ></v-pagination>
-                                            </v-container>
-                                            </v-col>
-                                        </v-row>
-                                        </v-container>
-                                    </div>
-                              </div>
-                              <div>
+                                    </v-data-table>
+                                </div>
+                                <div style="width:48%;float:left;margin-left:4%">
                                     <h5> Upload Test case </h5>
                                     <div class="file-upload">
                                         <v-file-input
                                         counter
                                         multiple
                                         show-size
-                                        style="width:50%"
                                         v-model="testcase_files"
                                         ></v-file-input>
                                     </div>
-                                    <v-simple-table v-if="testcase_files.length !== 0">
-                                    <template v-slot:default>
-                                    <thead>
-                                        <tr>
-                                        <th class="text-left">
-                                            #
-                                        </th>
-                                        <th class="text-left">
-                                            File Name
-                                        </th>
-                                        <th class="text-left">
-                                            File Size
-                                        </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr
-                                        v-for="(file,i) in testcase_show_files"
-                                        :key = i
-                                        >
-                                        <td> {{file.idx}} </td>
-                                        <td>{{ file.name }}</td>
-                                        <td>{{ conv_size(file.size) }}</td>
-                                        </tr>
-                                    </tbody>
+                                    <v-text-field
+                                        v-model="testcase_search"
+                                        append-icon="mdi-magnify"
+                                        label="Search"
+                                        single-line
+                                        hide-details
+                                        v-if="testcase_files.length !== 0"
+                                    ></v-text-field>
+                                    <v-data-table :headers="file_headers" :items="testcase_file_list" :search="testcase_search" v-if="testcase_files.length !== 0">
+                                    <template v-slot:[`item.size`]="{ item }" ]>
+                                        {{conv_size(item.size)}}
                                     </template>
-                                </v-simple-table>
-                                <div class="text-center" style="width:100%" v-if="testcase_files.length !== 0">
-                                        <v-container>
-                                        <v-row justify="center">
-                                            <v-col cols="8">
-                                            <v-container>
-                                                <v-pagination
-                                                v-model="testcase_page"
-                                                class="my-4"
-                                                :length="Math.ceil(testcase_files.length / 10)"
-                                                ></v-pagination>
-                                            </v-container>
-                                            </v-col>
-                                        </v-row>
-                                        </v-container>
-                                    </div>
+                                    </v-data-table>
                                 </div>
-                                <h5>Due Date</h5>
-                                <v-date-picker
-                                  v-model="selected_problem.due_date"
-                                  elevation="15"
-                                ></v-date-picker>
-                                <h5 class="input_title">Problem discription</h5>
-                                <ckeditor v-model="selected_problem.problem_discription" :config="editorConfig"></ckeditor>
+                                    </div>
+                                
+                                <div style="display:flex;">
+                                <div style="width:48%;height:20%;">
+                                    <h5>Due Date</h5>
+                                    <v-date-picker
+                                    v-model="selected_problem.due_date"
+                                    elevation="15"
+                                    ></v-date-picker>
+                                </div>
+
+                                 <div style="width:48%;height:20%;margin-left:4%;">
+                                    <h5>Realtime Feedback Option</h5>
+                                    <v-switch v-model="selected_problem.type" :label="`Realtime Feedback : ${selected_problem.type.toString()}`" v-if="selected_problem.type!=undefined"></v-switch>
+                                </div>
+                                </div>
+                                <div style="margin-top:5%;">
+                                    <h5 >Problem discription</h5>
+                                    <ckeditor v-model="selected_problem.problem_discription" :config="editorConfig"></ckeditor>
+                                </div>
                                 
                                 <v-btn outlined color="primary" width="100%" style="margin-top:3%" @click="upload" class="upload-button"
-                                    :disabled="reference_files.length == 0 || testcase_files.length == 0">Upload files</v-btn>
+                                    :disabled="(reference_files.length == 0 || testcase_files.length == 0)" v-if="!type">Create Problem</v-btn>
+                                <v-btn outlined color="primary" width="100%" style="margin-top:3%" @click="upload" class="upload-button" v-else>Update Problem</v-btn>
                                 <div class="loading-overlay" v-if="loading">
                                     <md-progress-spinner md-mode="indeterminate" :md-stroke="2"></md-progress-spinner>
                                     {{loading_msg}}
@@ -258,8 +215,8 @@
                     <v-list-item-title>Do Smart Feedback</v-list-item-title>
                     <v-btn color="success" @click="doFeedback()" disabled v-if="selected_problem.state != undefined && selected_problem.state == 1"> Do Smart Feedback </v-btn>
                     <v-btn color="success" @click="doFeedback()" v-else> Do Smart Feedback </v-btn>
-                    <v-btn color="primary" @click="getFeedbackData()" v-if="csv_name.length>0"> Get Smart Feedback Data</v-btn>
-                    <v-btn color="blue-grey" @click="publishFeedbackData()" v-if="csv_name.length>0"> Publish Smart Feedback Data</v-btn>
+                    <v-btn color="primary" @click="getFeedbackData()" v-if="csv_name!=''"> Get Smart Feedback Data</v-btn>
+                    <v-btn color="blue-grey" @click="publishFeedbackData()" v-if="csv_name!=''"> Publish Smart Feedback Data</v-btn>
                 </v-list-item-content>
             </v-list-item>
             </v-list>
@@ -299,7 +256,10 @@
 export default {
   data: () => ({
     search: '',
+    reference_search: '',
+    testcase_search: '',
     problem_list : [],
+    type: false,
     headers: [
         {
             text: 'Problem Name',
@@ -323,16 +283,29 @@ export default {
           value: 'update'
         }
     ],
+    file_headers: [
+        {
+            text: '#',
+            align: 'start',
+            value: 'idx'
+        },
+        {
+            text: 'File Name',
+            value: 'name'
+        },
+        {
+            text: 'File Size',
+            value: 'size'
+        },
+    ],
     dialog:false,
     overlay:false,
     selected_problem: {},
     testcase_files: [],
-    testcase_page: 1,
-    testcase_show_files: [],
     reference_files: [],
+    reference_file_list: [],
+    testcase_file_list: [],
     loading: false,
-    reference_page: 1,
-    reference_show_files: [],
     name_check: false,
     loading_msg: '',
     problem_name_state: 'You have to check problem name first!',
@@ -372,18 +345,11 @@ export default {
         problem_list : this.$firebase.firestore().collection('Problems').where("lecture_key", "==", this.$route.params.lecture_key)
     }
   },
-  created () {
-    
-  },
   methods: {
     closeDialog() {
       this.selected_problem = {}
       this.testcase_files = []
-      this.testcase_page = 1
-      this.testcase_show_files = []
       this.reference_files = []
-      this.reference_page = 1
-      this.reference_show_files = []
       this.name_check = false
       this.loading_msg = ''
       this.problem_name_state = 'You have to check problem name first!'
@@ -391,17 +357,13 @@ export default {
     },
     openUpdateDialog(val) {
       this.selected_problem = val
+      this.type = true
       this.dialog = true
     },
     openCreateDialog() {
-      this.selected_problem = {}
+      this.selected_problem = {type:false}
+      this.type = false
       this.dialog = true
-    },
-    updateProblem() {
-
-    },
-    createProblem() {
-
     },
     conv_size(size) {
         size = Number(size)
@@ -485,7 +447,8 @@ export default {
             problem_name : this.selected_problem.problem_name,
             due_date : this.selected_problem.due_date,
             problem_discription : this.selected_problem.problem_discription,
-            lecture_key : this.$route.params.lecture_key
+            lecture_key : this.$route.params.lecture_key,
+            type : this.selected_problem.type
         }).then(function() {
             db_finish = true
             if(db_finish && backend_finish) {
@@ -501,7 +464,8 @@ export default {
       this.Feedback_overlay = true
       this.$http.post('/api/get_question_info', {problem_name : this.selected_problem.problem_name})
       .then((response) => {
-          this.csv_name = response.data
+          if(response.data.length>0) this.csv_name = response.data[0]
+          else this.csv_name = ''
           this.Feedback_overlay = false
       })
     },
@@ -532,13 +496,14 @@ export default {
       .then((response) => {
         if(response.data) this.Feedback_overlay = false
         alert("Smart Feedback System is executing now!")
+        this.closeFeedbackDialog()
       })
     },
     closeFeedbackDialog() {
       this.Feedback_dialog = false
       this.selected_problem = {},
       this.Feedback_data = []
-      this.csv_name = []
+      this.csv_name = ''
     },
     publishFeedbackData() {
       this.Feedback_overlay = true
@@ -566,33 +531,25 @@ export default {
   },
   watch: {
     reference_files: function (val) {
-        this.reference_page = 1
-        this.reference_show_files = val.slice(0,10)
-        for(var i = 0;i<this.reference_show_files.length;i++)
+        this.reference_file_list = []
+        for(var i=0;i<val.length;i++)
         {
-            this._show_files[i].idx = i + 1
-        }
-    },
-    reference_page: function (val) {
-        this.reference_show_files = this.reference_files.slice(10*(val-1), 10*val)
-        for(var i = 0;i<this.reference_show_files.length;i++)
-        {
-            this.reference_show_files[i].idx = 10*(val-1) + i + 1
+            var temp = {}
+            temp.idx = i+1
+            temp.name = val[i].name
+            temp.size = val[i].size
+            this.reference_file_list.push(temp)
         }
     },
     testcase_files: function (val) {
-        this.testcase_page = 1
-        this.testcase_show_files = val.slice(0,10)
-        for(var i = 0;i<this.testcase_show_files.length;i++)
+        this.testcase_file_list = []
+        for(var i = 0;i<val.length;i++)
         {
-            this.testcase_show_files[i].idx = i + 1
-        }
-    },
-    testcase_page: function (val) {
-        this.testcase_show_files = this.testcase_files.slice(10*(val-1), 10*val)
-        for(var i = 0;i<this.testcase_show_files.length;i++)
-        {
-            this.testcase_show_files[i].idx = 10*(val-1) + i + 1
+            var temp = {}
+            temp.idx = i+1
+            temp.name = val[i].name
+            temp.size = val[i].size
+            this.testcase_file_list.push(temp)
         }
     },
     problem_name: function () {

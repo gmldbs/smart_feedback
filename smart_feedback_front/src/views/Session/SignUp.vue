@@ -8,11 +8,21 @@
 
       <div class="form">
         <md-field>
-          <label>E-mail</label>
+          <label>Student ID</label>
+          <md-input v-model="student_id" autofocus></md-input>
+        </md-field>
+
+        <md-field>
+          <label>Name</label>
+          <md-input v-model="name" autofocus></md-input>
+        </md-field>
+
+        <md-field>
+          <label>ID</label>
           <md-input v-model="email" autofocus></md-input>
         </md-field>
         <div class="alert alert-danger" v-if="!email_valid">
-            abcde
+            The ID must be email type.
         </div>
 
         <md-field md-has-password>
@@ -20,7 +30,7 @@
           <md-input v-model="password" type="password"></md-input>
         </md-field>
         <div class="alert alert-danger" v-if="!password_valid">
-            abcde
+            The password must be longer than 8 digits.
         </div>
 
         <md-field md-has-password>
@@ -28,7 +38,7 @@
           <md-input v-model="check_password" type="password"></md-input>
         </md-field>
         <div class="alert alert-danger" v-if="!check_valid">
-            abcde
+            The password isn't match.
         </div>
       </div>
 
@@ -55,9 +65,11 @@ export default {
         email: "",
         password: "",
         check_password: "",
+        student_id: "",
         check_valid: true,
         email_valid: true,
         password_valid: true,
+        name: "",
     };
   },
   watch: {
@@ -85,6 +97,9 @@ export default {
     },
     signUp() {
       var router = this.$router
+      if(this.email.length == 0 || this.password.length ==0 ) {
+        return alert("Fill all blank!")
+      }
       if(this.email_valid && this.password_valid && this.check_valid) {
         var firebase = this.$firebase
         firebase.firestore().collection('User').doc(this.email).get().then((doc) => {
@@ -94,10 +109,13 @@ export default {
                 firebase.firestore().collection('User').doc(this.email)
                 .set({
                 password: this.password,
-                isAdmin: false
+                isAdmin: false,
+                student_id: this.student_id,
+                name: this.name,
                 }).then(function() {
                     alert("SignUp Success!")
-                    router.replace("/")}
+                    router.replace("/")
+                  }
                 )
             }
         })

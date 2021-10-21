@@ -7,8 +7,6 @@
           md="8"
         >
           <h1>Lecture List</h1>
-          <v-btn @click="test">test</v-btn>
-          {{$store.state.student_id}}
         </v-col>
       </v-row>
       <v-divider></v-divider>

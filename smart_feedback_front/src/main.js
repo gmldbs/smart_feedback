@@ -16,7 +16,8 @@ import 'firebase/firestore'
 import VueFirestore from 'vue-firestore'
 import VueLazyload from "vue-lazyload"
 import CKEditor from 'ckeditor4-vue';
-
+import { PrismEditor } from 'vue-prism-editor';
+import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles
 //import 'firebase/firestore'
 const firebaseConfig = {
   apiKey: "AIzaSyCyP12_GNBAc7JM2dKoCumP2qsqNNGwotE",
@@ -35,6 +36,8 @@ Vue.use(VueMaterial)
 Vue.use(VueFirestore)
 Vue.use(VueLazyload)
 Vue.use(CKEditor)
+
+Vue.component('PrismEditor', PrismEditor);
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 //Vue.prototype.$db = firebase.firestore()

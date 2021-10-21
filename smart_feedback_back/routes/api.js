@@ -32,26 +32,32 @@ function Feedback(problem_name, problem_key) {
       console.log(err)
     } else {
       firebase.firestore().collection('Problems').doc(problem_key).set({state: 2}, {merge : true})
-      var results = []
-      fs.createReadStream(`../smart_feedback_refactory/data/${problem_name}/${csv_name}`)
-      .pipe(csv())
-      .on("data", (data) => results.push(data))
-      .on("end", () => {
-        res.send(results)
-      });
     }
   });
 }
 
-router.get('/firebase_test', function(req, res){
-  firebase.firestore().collection('User').doc("test")
-  .set({
-  password: "1234",
-  isAdmin: false
-  }).then(function() {
-    return res.json({firebase: true})
-  })
-});
+function realtimeFeedback(problem_name, res, total, correct) {
+  var options = {
+    mode: 'text',
+    pythonPath: '', 
+    pythonOptions: ['-u'],
+    scriptPath:  __dirname+'/../smart_feedback_refactory/',
+    args: [ '-d', __dirname+'/../smart_feedback_refactory/data', '-q', `${problem_name}`, '-s', '100', '-o', '-m', '-b'],
+  };
+  PythonShell.run('./run.py', options, function (err, results) {
+    if (err) {
+      console.log(err)
+    } else {
+      var results = []
+      fs.createReadStream(`./smart_feedback_refactory/data/${problem_name}/refactory_online.csv`)
+      .pipe(csv())
+      .on("data", (data) => results.push(data))
+      .on("end", () => {
+        return res.send({total: total, correct: correct, feedback: results})
+      });
+    }
+  });
+}
 
 router.get('/get_question_list', function(req, res, next) {
   res.send(getDirectories('./smart_feedback_refactory/data'))
@@ -71,16 +77,15 @@ router.post('/get_feedback_info', function(req, res, next) {
   .on("data", (data) => results.push(data))
   .on("end", () => {
     res.send(results)
-    console.log(results)
   });
 });
 
 router.post('/do_feedback', function(req, res, next) {
-  Feedback(req.body.problem_name, req.body.problem_key)
   firebase.firestore().collection('Problems').doc(req.body.problem_key)
   .set({
   state : 1
   }, {merge : true}).then(function() {
+    Feedback(req.body.problem_name, req.body.problem_key)
     res.send(true)
   })
 });
@@ -89,7 +94,17 @@ router.post('/submit_code', function(req, res, next) {
   const code = req.body.code
   const question = req.body.problem
   const student_id = req.body.student_id
-  var correct = 0
+  fs.exists(`${__dirname}/../smart_feedback_refactory/data/${question}/code/correct/correct_${student_id}.py`, function(exists) {
+    if(exists) fs.unlink(`${__dirname}/../smart_feedback_refactory/data/${question}/code/correct/correct_${student_id}.py`, function(err) {
+      if(err) console.log(err)
+    })
+  })
+  fs.exists(`${__dirname}/../smart_feedback_refactory/data/${question}/code/wrong/wrong_${student_id}.py`, function(exists) {
+    if(exists) fs.unlink(`${__dirname}/../smart_feedback_refactory/data/${question}/code/wrong/wrong_${student_id}.py`, function(err) {
+      if(err) console.log(err)
+    })
+  })
+  var correct_cnt = 0
   var check_cnt = 0
   var total = 0
   fs.readdir(`${__dirname}/../smart_feedback_refactory/data/${question}/ans`, function (err, files) {
@@ -97,12 +112,14 @@ router.post('/submit_code', function(req, res, next) {
     files.forEach(function (file) {
       if(file.includes('input')) {
         total++
-        var testcase_num = file.split(".")[0].slice(-3)
+        var testcase_num = file.split("_")[1]
+        testcase_num = testcase_num.split(".")[0]
         var content = `import time, sys, base64
-sys.stdout=open('${student_id}_${testcase_num}_output.txt', 'w', encoding='utf8')
+sys.stdout=open('${__dirname}/../smart_feedback_refactory/student_codes/${student_id}_${testcase_num}_output.txt', 'w', encoding='utf8')
 ` + code
         fs.readFile(`${__dirname}/../smart_feedback_refactory/data/${question}/ans/${file}`,(err, data) => {
           if(err) throw err
+          while(data[data.length-1] == ' ' || data[data.length-1] =='\n') ddata=data.substr(0,data.length-1)
           var test_content = content + `
 print(${data})`
           fs.writeFile(`${__dirname}/../smart_feedback_refactory/student_codes/${student_id}_${testcase_num}.py`, test_content, function(err) {
@@ -113,21 +130,21 @@ print(${data})`
               pythonOptions: ['-u'],
               scriptPath: __dirname+'/../smart_feedback_refactory/student_codes/',
             };
-            input_files = 
-            PythonShell.run(`./exec_${testcase_num}.py`, options, function (err, results) {
+            PythonShell.run(`./${student_id}_${testcase_num}.py`, options, function (err, results) {
               if (err) {
                 console.log(err)
                 res.send(err.message);
               } else {
-                fs.readFile(`./${student_id}_${testcase_num}_output.txt`, 'utf8', function(err, output_data) {
+                fs.readFile(`${__dirname}/../smart_feedback_refactory/student_codes/${student_id}_${testcase_num}_output.txt`, 'utf8', function(err, output_data) {
                   if(err) console.log(err)
-                  fs.readFile(`${__dirname}/../smart_feedback_refactory/data/${question}/ans/${student_id}_${testcase_num}_output.txt`, 'utf8',(err, correct_data) => {
+                  fs.readFile(`${__dirname}/../smart_feedback_refactory/data/${question}/ans/output_${testcase_num}.txt`, 'utf8',(err, correct_data) => {
                     if(err) console.log(err)
-                    if(output_data == correct_data) correct++
+                    if(output_data == correct_data) correct_cnt++
                     check_cnt++
                     if(check_cnt == total) {
-                      res.send({total: total, correct: correct})
-                      if(correct !== total) {
+                      if(total == correct_cnt) res.send({total: total, correct: correct_cnt})
+                      else realtimeFeedback(question, res, total, correct_cnt) //res.send({total: total, correct: correct_cnt, feedback: realtimeFeedback(question)})
+                      if(correct_cnt !== total) {
                         fs.writeFile(`${__dirname}/../smart_feedback_refactory/data/${question}/code/wrong/wrong_${student_id}.py`, code, function(err) {
                           if(err) throw err
                         })
@@ -138,6 +155,12 @@ print(${data})`
                         })
                       }
                     }
+                    fs.unlink(`${__dirname}/../smart_feedback_refactory/student_codes/${student_id}_${testcase_num}_output.txt`,function(err) {
+                      if(err) console.log(err)
+                    })
+                    fs.unlink(`${__dirname}/../smart_feedback_refactory/student_codes/${student_id}_${testcase_num}.py`,function(err) {
+                      if(err) console.log(err)
+                    })
                   })
                 });
               }
@@ -235,15 +258,26 @@ router.post('/upload_reference', function(req, res, next) {
   if (!req.files) {
     return res.status(500).send({ msg: "file is not found" })
   }
-  for(var i=0;i<req.files.file.length;i++)
-  {
-    const myFile = req.files.file[i]
-    myFile.mv(`${__dirname}/../smart_feedback_refactory/data/${_problem_name}/code/reference/${myFile.name}`, function (err) {
+  if(req.files.file.length == undefined) {
+    const myFile = req.files.file
+    myFile.mv(`${__dirname}/../smart_feedback_refactory/data/${_problem_name}/code/reference/reference.py`, function (err) {
       if (err) {
           isErr= true
           return res.send({ msg: "Error occured" });
       }
     });
+  }
+  else {
+    for(var i=0;i<req.files.file.length;i++)
+    {
+      const myFile = req.files.file[i]
+      myFile.mv(`${__dirname}/../smart_feedback_refactory/data/${_problem_name}/code/reference/reference.py`, function (err) {
+        if (err) {
+            isErr= true
+            return res.send({ msg: "Error occured" });
+        }
+      });
+    }
   }
   if(!isErr) return res.send("success");
 });
@@ -252,15 +286,26 @@ router.post('/upload_testcase', function(req, res, next) {
   if (!req.files) {
     return res.status(500).send({ msg: "file is not found" })
   }
-  for(var i=0;i<req.files.file.length;i++)
-  {
-    const myFile = req.files.file[i]
+  if(req.files.file.length == undefined) {
+    const myFile = req.files.file
     myFile.mv(`${__dirname}/../smart_feedback_refactory/data/${_problem_name}/ans/${myFile.name}`, function (err) {
       if (err) {
           isErr= true
           return res.send({ msg: "Error occured" });
       }
     });
+  }
+  else {
+    for(var i=0;i<req.files.file.length;i++)
+    {
+      const myFile = req.files.file[i]
+      myFile.mv(`${__dirname}/../smart_feedback_refactory/data/${_problem_name}/ans/${myFile.name}`, function (err) {
+        if (err) {
+            isErr= true
+            return res.send({ msg: "Error occured" });
+        }
+      });
+    }
   }
   if(!isErr) return res.send("success");
 });

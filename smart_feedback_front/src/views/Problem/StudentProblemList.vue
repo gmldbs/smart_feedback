@@ -31,88 +31,6 @@
                 </template>
             </v-data-table>
       </v-card>
-      <v-row justify="center">
-        <v-dialog
-        v-model="dialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-        >
-        <v-overlay :value="overlay"></v-overlay>
-        <v-card>
-            <v-toolbar
-            dark
-            color="primary"
-            >
-            <v-btn
-                icon
-                dark
-                @click="closeDialog()"
-            >
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-toolbar-title>{{selected_problem.problem_name}}</v-toolbar-title>
-            </v-toolbar>
-            <v-list
-            three-line
-            subheader
-            >
-            <v-subheader>Problem Discription</v-subheader>
-            <v-list-item>
-                <v-list-item-content>
-                    <p v-html="selected_problem.problem_discription"></p>
-                </v-list-item-content>
-            </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list
-            three-line
-            subheader
-            >
-            <v-subheader>Write your code</v-subheader>
-            <b-container>
-                <b-row>
-                <b-col sm="2" style="text-align: center">
-                    <label for="textarea-auto-height">Python code:</label>
-                </b-col>
-                <b-col sm="10">
-                    <b-form-textarea
-                    id="textarea-auto-height"
-                    placeholder="Write your code"
-                    rows="20"
-                    max-rows="20"
-                    v-model="code"
-                    ></b-form-textarea>
-                </b-col>
-                </b-row>
-
-                <b-row>
-                <b-col sm="2" style="text-align: center">
-                    <label for="textarea-auto-height">Result</label>
-                </b-col>
-                <b-col sm="10">
-                    <b-form-textarea
-                    id="textarea-auto-height"
-                    disabled
-                    rows="5"
-                    max-rows="5"
-                    v-model="result"
-                    ></b-form-textarea>
-                </b-col>
-                </b-row>
-
-                <b-row>
-                    <b-col>
-                        <v-btn style="width:46%;margin-right:4%" outlined color="teal" @click = "run()">Run</v-btn>
-                        <v-btn style="width:46%;margin-left:4%" outlined color="indigo" @click = "submit()">Submit</v-btn>
-                    </b-col>
-                </b-row>
-
-            </b-container>
-            </v-list>
-        </v-card>
-        </v-dialog>
-    </v-row>
     <v-row justify="center">
         <v-dialog
         v-model="Feedback_dialog"
@@ -200,7 +118,26 @@
 
 <script>
 export default {
+    inject: { $item: { default: null } },
+  props: {
+    itemId: { type: [Number, String] }
+  },
+  computed: {
+    itemByinject() {
+      if (this.$item) {
+        return this.$item();
+      }
+      return null;
+    },
+    id() {
+      if (this.itemByinject) {
+        return this.itemByinject.id;
+      }
+      return "";
+    }
+  },
   data: () => ({
+      tab: 4,
     search: '',
     problem_list : [],
     headers: [
@@ -240,7 +177,76 @@ export default {
     code: '',
     result: '',
     repair_info: {},
-    grade : ''
+    grade : '',
+    dlayouts: [
+        {
+          numberOfCols: 30,
+          breakpoint: "xl",
+          items: [
+            { id: "1", x: 0, y: 0, width: 12, height: 15 },
+            { id: "2", x: 12, y: 0, width: 18, height: 1 },
+            { id: "3", x: 12, y: 1, width: 18, height: 10 },
+            { id: "4", x: 12, y: 11, width: 18, height: 1 },
+            { id: "5", x: 12, y: 12, width: 18, height: 3 },
+            { id: "6", x: 0, y: 14, width: 30, height: 1 },
+          ]
+        },
+        {
+          breakpoint: "lg",
+          breakpointWidth: 1200,
+          numberOfCols: 30,
+          items: [
+            { id: "1", x: 0, y: 0, width: 12, height: 15 },
+            { id: "2", x: 12, y: 0, width: 18, height: 1 },
+            { id: "3", x: 12, y: 1, width: 18, height: 10 },
+            { id: "4", x: 12, y: 11, width: 18, height: 1 },
+            { id: "5", x: 12, y: 12, width: 18, height: 3 },
+            { id: "6", x: 0, y: 14, width: 30, height: 1 },
+          ]
+        },
+        {
+          breakpoint: "md",
+          breakpointWidth: 996,
+          numberOfCols: 8,
+          items: [
+            { id: "1", x: 0, y: 0, width: 1, height: 1 },
+            { id: "2", x: 1, y: 0, width: 2, height: 1 },
+          ]
+        },
+        {
+          breakpoint: "sm",
+          breakpointWidth: 768,
+          numberOfCols: 4,
+          items: [
+            { id: "1", x: 0, y: 0, width: 1, height: 1 },
+            { id: "2", x: 1, y: 0, width: 2, height: 1 },
+          ]
+        },
+        {
+          breakpoint: "xs",
+          breakpointWidth: 480,
+          numberOfCols: 2,
+          items: [
+            { id: "1", x: 0, y: 0, width: 1, height: 1 },
+            { id: "2", x: 1, y: 0, width: 1, height: 1 },
+          ]
+        },
+        {
+          breakpoint: "xxs",
+          breakpointWidth: 0,
+          numberOfCols: 1,
+          items: [
+            {
+              id: "1",
+              x: 0,
+              y: 0,
+              width: 1,
+              height: 1
+            },
+            { id: "2", x: 0, y: 1, width: 1, height: 1 }
+          ]
+        }
+      ]
   }),
   firestore () {
     return {
@@ -255,8 +261,9 @@ export default {
       this.dialog = false
     },
     openDialog(problem) {
-      this.dialog= true
-      this.selected_problem = problem
+      this.$router.push('/solve/'+problem['.key'])
+      //this.dialog= true
+      //this.selected_problem = problem
     },
     submit () {
         var student_id = this.$store.state.student_id
@@ -291,15 +298,44 @@ export default {
     closeFeedbackDialog() {
         this.Feedback_dialog = false
         this.selected_problem = {}
-    }
+    },
   },
   watch: {
   }
 }
 </script>
-<style>
+<style lang="scss">
+// required class
+.my-editor {
+  background: #1E1E1E;
+  color: rgb(255, 255, 255);
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 5px;
+}
+
+// optional
+.prism-editor__textarea:focus {
+  outline: none;
+}
+
+// not required:
+.height-300 {
+  height: 300px;
+}
 .example-vuex label.btn {
   margin-bottom: 0;
   margin-right: 1rem;
+}
+.content {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #172334;
+  border-radius: 5px;
+}
+.bottom {
+  height: 100%;
+  width: 100%;
 }
 </style>
