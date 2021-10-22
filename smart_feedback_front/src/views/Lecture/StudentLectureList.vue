@@ -28,7 +28,7 @@
                   <p class="text-h4 text--primary">
                     {{lecture.lecture_name}}
                   </p>
-                  <p>Professor {{lecture.admin}}</p>
+                  <p>Professor {{lecture.admin_name}}</p>
                   <div class="text--primary">
                     {{lecture.lecture_description}}
                   </div>

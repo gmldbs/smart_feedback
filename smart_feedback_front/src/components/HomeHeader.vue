@@ -123,7 +123,6 @@ export default {
       { title: 'Log Out', link: '/log_out'},
     ],
     admin_items: [
-      { title: 'Upload problem', link: '/upload_problem'},
       { title: 'Manage problem', link: '/problem_lecture_list'},
       { title: 'Manage Lecture', link: '/lecture_list'},
       { title: 'Log Out', link: '/log_out'},
