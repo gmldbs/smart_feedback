@@ -17,19 +17,11 @@
         </v-col>
       </v-row>
       <v-divider></v-divider>
-      <v-card>
-        <v-container fluid>
-          <v-row dense>
-            <v-col
-              v-for="lecture in lectures"
-              :key="lecture.title"
-              cols="4"
-            >
-              <v-card
-                class="mx-auto"
-                min-width="30%"
-              >
-                <v-card-text>
+      <div>
+        <v-row class="ma-2">
+          <v-col md="4" class="pa-3 d-flex flex-column" v-for="lecture in lectures" :key="lecture['.key']">
+            <v-card class="elevation-5 flex d-flex flex-column">
+              <v-card-text>
                   <div>{{lecture.year}}년도 - {{lecture.semester}}학기</div>
                   <p class="text-h4 text--primary">
                     {{lecture.lecture_name}}
@@ -48,11 +40,10 @@
                     Update
                   </v-btn>
                 </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
       <v-row justify="center">
         <v-dialog
         v-model="dialog"
@@ -95,7 +86,6 @@
                           cols="12"
                           md="12"
                         >
-                          <base-material-card>
                             <v-form>
                               <v-container class="py-0">
                                 <v-row>
@@ -158,21 +148,63 @@
                                             vertical
                                           ></v-divider>
                                           <v-spacer></v-spacer>
+                                          <v-btn
+                                                color="primary"
+                                                dark
+                                                class="mb-2"
+                                                @click="openStudentCreateDialog()"
+                                              >
+                                                Add students
+                                          </v-btn>
+                                          <v-dialog
+                                            v-model="createDialog"
+                                            max-width="500px"
+                                          >
+                                            <v-card>
+                                              <v-card-title>
+                                                <span class="text-h5">Student ID</span>
+                                              </v-card-title>
+
+                                              <v-card-text>
+                                                <v-container>
+                                                  <v-row>
+                                                    <v-col
+                                                      cols="12"
+                                                      sm="6"
+                                                      md="4"
+                                                    >
+                                                      <v-text-field
+                                                        v-model="createStudent_id"
+                                                        label="Student ID"
+                                                      ></v-text-field>
+                                                    </v-col>
+                                                  </v-row>
+                                                </v-container>
+                                              </v-card-text>
+
+                                              <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn
+                                                  color="blue darken-1"
+                                                  text
+                                                  @click="closeStudentCreateDialog"
+                                                >
+                                                  Cancel
+                                                </v-btn>
+                                                <v-btn
+                                                  color="blue darken-1"
+                                                  text
+                                                  @click="createStudent"
+                                                >
+                                                  Save
+                                                </v-btn>
+                                              </v-card-actions>
+                                            </v-card>
+                                          </v-dialog>
                                           <v-dialog
                                             v-model="editedDialog"
                                             max-width="500px"
                                           >
-                                            <template v-slot:activator="{ on, attrs }">
-                                              <v-btn
-                                                color="primary"
-                                                dark
-                                                class="mb-2"
-                                                v-bind="attrs"
-                                                v-on="on"
-                                              >
-                                                Add students
-                                              </v-btn>
-                                            </template>
                                             <v-card>
                                               <v-card-title>
                                                 <span class="text-h5">Student ID</span>
@@ -214,9 +246,9 @@
                                               </v-card-actions>
                                             </v-card>
                                           </v-dialog>
-                                          <v-dialog v-model="dialogDelete" max-width="500px">
+                                          <v-dialog v-model="deleteDialog" max-width="600px">
                                             <v-card>
-                                              <v-card-title class="text-h5">Are you sure you want to delete this student ID?</v-card-title>
+                                              <v-card-title class="justify-center">Are you sure you want to delete this student ID?</v-card-title>
                                               <v-card-actions>
                                                 <v-spacer></v-spacer>
                                                 <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -237,7 +269,7 @@
                                         </v-icon>
                                         <v-icon
                                           small
-                                          @click="deleteItem(item)"
+                                          @click="openDeleteDialog(item)"
                                         >
                                           mdi-delete
                                         </v-icon>
@@ -268,7 +300,6 @@
                                 </v-row>
                               </v-container>
                             </v-form>
-                          </base-material-card>
                         </v-col>
                       </v-row>
                     </v-container> 
@@ -306,6 +337,7 @@ export default {
       {
         text: 'Student_id',
         align: 'start',
+        value: 'student_id'
       },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
@@ -319,9 +351,9 @@ export default {
     edited_idx : 0,
     editedDialog: false,
     delete_idx : 0,
-    deletedDialog: false,
-    dialogDelete: false,
-
+    deleteDialog: false,
+    createDialog: false,
+    createStudent_id: ''
   }),
   firestore () {
     return {
@@ -329,13 +361,20 @@ export default {
     }
   },
   methods: {
+    cloneObject(obj) {
+      var clone = {}
+      for (var key in obj) {
+          clone[key] = obj[key]
+      }
+      return clone;
+    },
     openUpdateDialog(lecture) {
-      this.selected_lecture = lecture
+      this.selected_lecture = this.cloneObject(lecture)
       this.selected_lecture_key = this.selected_lecture['.key']
       this.dialog = true
     },
     openCreateDialog() {
-      this.selected_lecture = {}
+      this.selected_lecture = {students: []}
       this.selected_lecture_key = ''
       this.dialog = true
     },
@@ -344,6 +383,9 @@ export default {
     },
     update_lecture() {
       this.overlay = true
+      for(var i = 0; i<this.selected_lecture['students'].length; i++) {
+        this.selected_lecture['students'][i] = this.selected_lecture['students'][i]['student_id']
+      }
       this.$firebase.firestore().collection('Lectures').doc(this.selected_lecture_key).set(this.selected_lecture, {merge:true}).then(() => {
         this.overlay = false
         alert("Update Success!")
@@ -354,6 +396,9 @@ export default {
       this.overlay = true
       this.selected_lecture['admin'] = this.$store.state.user
       this.selected_lecture['admin_name'] = this.$store.state.user_name
+      for(var i = 0; i<this.selected_lecture['students'].length; i++) {
+        this.selected_lecture['students'][i] = this.selected_lecture['students'][i]['student_id']
+      }
       this.$firebase.firestore().collection('Lectures').add(this.selected_lecture).then((doc) => {
           console.log("Document written with ID: ", doc.id);
           this.overlay = false
@@ -367,6 +412,19 @@ export default {
           this.closeDialog()
       })
     },
+    openStudentCreateDialog() {
+      this.createStudent_id = ''
+      this.createDialog = true
+    },
+    closeStudentCreateDialog() {
+      this.createDialog = false
+      this.createStudent_id = ''
+    },
+    createStudent() {
+      this.selected_lecture['students'].push({student_id: this.createStudent_id})
+      this.createStudent_id = ''
+      this.createDialog = false
+    },
     openEditDialog(item) {
       this.edited_item = item
       this.edited_idx = this.selected_lecture.students.indexOf(item)
@@ -374,11 +432,15 @@ export default {
     },
     closeEditDialog () {
       this.edited_item = {}
-      this.edited_dialog = false
+      this.editedDialog = false
     },
     save () {
-      this.selected_lecture.students[this.edited_idx] = this.edited_item
+      this.selected_lecture.students[this.edited_idx] = this.edited_item.student_id
       this.editedDialog = false
+    },
+    openDeleteDialog(item) {
+      this.edited_idx = this.selected_lecture.students.indexOf(item)
+      this.deleteDialog = true
     },
     closeDelete() {
       this.deleteDialog = false
@@ -389,6 +451,16 @@ export default {
     },
   },
   watch: {
+    lectures: function (val) {
+      for(var i=0; i<val.length; i++) {
+        var temp_student_array = []
+        for(var j=0; j<val[i].students.length; j++) {
+          var temp_each_student = {student_id : val[i].students[j]}
+          temp_student_array.push(temp_each_student)
+        }
+        val[i].students = temp_student_array
+      }
+    },
   }
 }
 </script>
