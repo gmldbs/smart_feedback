@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <div>
+    <app-header/>
+    <v-container>
       <v-row>
         <v-col
           cols="12"
@@ -10,7 +12,6 @@
         </v-col>
       </v-row>
       <v-divider></v-divider>
-      <v-card>
         <v-container fluid>
           <v-row dense>
             <v-col
@@ -19,8 +20,6 @@
               cols="4"
             >
               <v-card
-                class="mx-auto"
-                min-width="30%"
                 @click="LectureProblemList(lecture)"
               >
                 <v-card-text>
@@ -37,8 +36,10 @@
             </v-col>
           </v-row>
         </v-container>
-      </v-card>
   </v-container>
+  
+  <app-footer/>
+  </div>
 </template>
 
 <script>

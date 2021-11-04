@@ -96,12 +96,10 @@ const routes = [
     component: () => import('../views/test.vue')
   },
   {
-    path: '/solve/:problem_key',
+    path: '/solve/:lecture_key/:problem_key',
     name: 'Solve Problem',
     components: {
-      header: AppHeader,
       default: Solve,
-      footer: AppFooter
     }
   },
   {

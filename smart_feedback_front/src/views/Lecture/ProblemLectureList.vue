@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <div>
+    <app-header/>
+    <v-container>
       <h1 class="problem_title">Lecture List</h1>
       <v-card>
             <v-card-title>
@@ -19,10 +21,15 @@
             ></v-data-table>
       </v-card>
   </v-container>
+  
+  <app-footer/>
+  </div>
 </template>
 
 <script>
+import AppHeader from '../../components/AppHeader.vue'
 export default {
+  components: { AppHeader },
   data: () => ({
     search: '',
     headers: [

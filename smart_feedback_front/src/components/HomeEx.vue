@@ -1,5 +1,6 @@
 <template>
     <div>
+        <home-header/>
         <section class="section back1">
             <!--h1 class="title2">Submit & Grading</h1-->
             <div class="container">

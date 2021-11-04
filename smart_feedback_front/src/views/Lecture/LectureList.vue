@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <app-header/>
   <v-container>
       <v-row justify="end">
         <v-col
@@ -311,6 +313,9 @@
         </v-dialog>
     </v-row>
   </v-container>
+  
+  <app-footer/>
+  </div>
 </template>
 
 <script>

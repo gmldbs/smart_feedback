@@ -1,36 +1,39 @@
 <template>
-  <v-container>
-      <v-row>
-        <v-col
-          cols="12"
-          sm="6"
-          md="8"
-        >
-          <h1>Problem List</h1>
-        </v-col>
-      </v-row>
-      <v-card>
-            <v-card-title>
-            <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-            ></v-text-field>
-            </v-card-title>
-            <v-data-table :headers="headers" :items="problem_list" :search="search">
-                <template v-slot:[`item.feedback`]="{ item }" ]>
-                    <v-icon @click="openFeedbackDialog(item)" v-if="item.feedback != undefined && item.feedback[$store.state.student_id] != undefined">mdi-magnify</v-icon>
-                </template>
-                <template v-slot:[`item.grade`]="{ item }" ]>
-                    <p v-if="item.grade != undefined && item.grade[$store.state.student_id] != undefined">{{item.grade[$store.state.student_id]}}</p>
-                </template>
-                <template v-slot:[`item.solve`]="{ item }" ]>
-                    <v-btn @click="openDialog(item)">Solve</v-btn>
-                </template>
-            </v-data-table>
-      </v-card>
+  <div>
+    <app-header/>
+    <v-container>
+
+      <h3>{{lecture_info.lecture_name}}</h3>
+      <div v-bind:key = "i" v-for="(problem,i) in problem_list">
+        <hr>
+        <h6>{{problem.problem_name}}</h6>
+        <p>마감 일자 : {{problem.due_date}}</p>
+        <p v-if="problem.grade == undefined">0명 완료</p>
+        <p v-else>{{Object.keys(problem.grade).length}}명 완료</p>
+        <v-btn v-if="problem.feedback != undefined && problem.feedback[$store.state.student_id] != undefined" @click="openFeedbackDialog(problem)">피드백 확인</v-btn>
+      </div>
+      <!--v-card>
+        <v-card-title>
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+        ></v-text-field>
+        </v-card-title>
+        <v-data-table :headers="headers" :items="problem_list" :search="search">
+            <template v-slot:[`item.feedback`]="{ item }" ]>
+                <v-icon @click="openFeedbackDialog(item)" v-if="item.feedback != undefined && item.feedback[$store.state.student_id] != undefined">mdi-magnify</v-icon>
+            </template>
+            <template v-slot:[`item.grade`]="{ item }" ]>
+                <p v-if="item.grade != undefined && item.grade[$store.state.student_id] != undefined">{{item.grade[$store.state.student_id]}}</p>
+            </template>
+            <template v-slot:[`item.solve`]="{ item }" ]>
+                <v-btn @click="openDialog(item)">Solve</v-btn>
+            </template>
+        </v-data-table>
+      </v-card-->
     <v-row justify="center">
         <v-dialog
         v-model="Feedback_dialog"
@@ -114,6 +117,9 @@
         </v-dialog>
     </v-row>
   </v-container>
+  
+  <app-footer/>
+  </div>
 </template>
 
 <script>
@@ -140,6 +146,7 @@ export default {
       tab: 4,
     search: '',
     problem_list : [],
+    lecture_info: {},
     headers: [
         {
             text: 'Problem Name',
@@ -250,7 +257,8 @@ export default {
   }),
   firestore () {
     return {
-        problem_list : this.$firebase.firestore().collection('Problems').where("lecture_key", "==", this.$route.params.lecture_key)
+        problem_list : this.$firebase.firestore().collection('Problems').where("lecture_key", "==", this.$route.params.lecture_key),
+        lecture_info : this.$firebase.firestore().collection('Lectures').doc(this.$route.params.lecture_key)
     }
   },
   created () {
@@ -261,7 +269,7 @@ export default {
       this.dialog = false
     },
     openDialog(problem) {
-      this.$router.push('/solve/'+problem['.key'])
+      this.$router.push('/solve/'+this.$route.params.lecture_key+'/'+problem['.key'])
       //this.dialog= true
       //this.selected_problem = problem
     },
