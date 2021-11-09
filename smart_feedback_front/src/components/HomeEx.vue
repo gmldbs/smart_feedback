@@ -1,168 +1,182 @@
 <template>
     <div>
-        <home-header/>
-        <section class="section back1">
-            <!--h1 class="title2">Submit & Grading</h1-->
+        <div class="background">
+            <StickyElement>
+                <app-header :isFlat="scrollPosition ==0 || scrollPosition == null ? true : false" />
+            </StickyElement> 
+            <v-container>
+                <v-row class="text-center">
+                <v-col cols="12">
+                    <v-img
+                    :src="require('../assets/skku_logo.png')"
+                    class="my-3"
+                    contain
+                    height="200"
+                    />
+                </v-col>
+                <v-col class="mb-4">
+                    <h1 class="display-2 font-weight-bold mb-3" style="color:white">
+                    Welcome to SKKU Smart Feedback System
+                    </h1>
+                    <p class="subheading font-weight-regular" style="color:white">
+                    This is SKKU Smart Feedback System,
+                    <br> You can join us
+                    <a
+                        href="https://cs.skku.edu/ko/"
+                        target="_blank"
+                    >SKKU Software</a>
+                    </p>
+                </v-col>
+                </v-row>
+            </v-container>
+            </div>
+        
+        <section class="back1">
             <div class="container">
+                <v-img
+                src="../assets/list.png"
+                max-height="150"
+                max-width="150"
+                contain
+                style="margin-top:30px;margin-left: auto; margin-right: auto;margin-bottom:30px;"
+                ></v-img>
+                <h2 style="text-align:center">SKKU Smart Feedback System</h2>
+                <p style="text-align:center; margin-bottom:50px;">
+                    Our Feedback System can manage lectuers & problems & feedback
+                </p>
                 <div class="row row-grid align-items-center">
                     <div class="col-md-6">
-                        <div class="card bg-default shadow border-0">
-                            <img src="@/assets/submit_image.png">
-                            <blockquote class="card-blockquote">
-                                <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 583 95"
-                                     class="svg-bg">
-                                    <polygon points="0,52 583,95 0,95" class="fill-default"></polygon>
-                                    <polygon points="0,42 583,95 683,0 0,95" opacity=".2" class="fill-default"></polygon>
-                                </svg>
-                                <h5 class="display-3 text-black">Grading System</h5>
-                                <p class="lead text-italic text-black">The Arctic Ocean freezes every winter and much of
-                                    the sea-ice then thaws every summer, and that process will continue whatever
-                                    happens.</p>
-                            </blockquote>
+                        <div class="pl-md-5">
+                            <v-hover style="margin-bottom:30px;" v-slot="{ hover }" open-delay="30" close-delay="30">
+                                <button style="text-align:left">
+                                <v-card
+                                :elevation="hover ? 16 : 0"
+                                :class="{ 'on-hover': hover }"
+                                class="mx-auto cardColor"
+                                @click.native="select(1)"
+                                >
+                                    <v-card-text :style="select_component == 1 ? 'color:black' : 'color:grey'">
+                                        <h3>Writing code & Submit</h3>
+                                        <p class="lead">You can submit and be grade where submit page.</p>
+                                        <p>You can see your grade that represent number of corrects and total</p>
+                                        <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
+                                    </v-card-text>
+                                </v-card>
+                                </button>
+                            </v-hover>
+                            <v-hover style="margin-bottom:20px;" v-slot="{ hover }" open-delay="30" close-delay="30">
+                                <button style="text-align:left">
+                                <v-card
+                                :elevation="hover ? 16 : 0"
+                                :class="{ 'on-hover': hover }"
+                                class="mx-auto cardColor"
+                                @click.native="select(2)"
+                                >
+                                    <v-card-text :style="select_component == 2 ? 'color:black' : 'color:grey'">
+                                        <h3>Grading & Feedback</h3>
+                                        <p class="lead">You can submit and be grade where submit page.</p>
+                                        <p>You can see your grade that represent number of corrects and total</p>
+                                        <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
+                                    </v-card-text>
+                                </v-card>
+                                </button>
+                            </v-hover>
+                            <v-hover style="margin-bottom:20px;" v-slot="{ hover }" open-delay="30" close-delay="30">
+                                <button style="text-align:left">
+                                <v-card
+                                :elevation="hover ? 16 : 0"
+                                :class="{ 'on-hover': hover }"
+                                class="mx-auto cardColor"
+                                @click.native="select(3)"
+                                >
+                                    <v-card-text :style="select_component == 3 ? 'color:black' : 'color:grey'">
+                                        <h3>Manage Lectures & Problems</h3>
+                                        <p class="lead">You can submit and be grade where submit page.</p>
+                                        <p>You can see your grade that represent number of corrects and total</p>
+                                        <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
+                                    </v-card-text>
+                                </v-card>
+                                </button>
+                            </v-hover>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="pl-md-5">
-                            <h3>Submit & Grading</h3>
-                            <p class="lead">You can submit and be grade where submit page.</p>
-                            <p>You can see your grade that represent number of corrects and total</p>
-                            <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
-                            
-                        </div>
+                        <transition name="fade" class="card bg-default shadow">
+                            <v-img :src="selected_image"/>
+                        </transition>
+                        
                     </div>
                 </div>
             </div>
         </section>
-        <section class="section back2">
-            <!--h1 class="title1">Feedback System</h1-->
+        <section class="back2">
             <div class="container">
+                <v-img
+                src="../assets/list.png"
+                max-height="150"
+                max-width="150"
+                contain
+                style="margin-top:30px;margin-left: auto; margin-right: auto;margin-bottom:30px;"
+                ></v-img>
                 <div class="row row-grid align-items-center">
-                    <div class="col-md-6">
-                        <div class="pl-md-5">
-                            <h3>Feedback</h3>
-                            <p class="lead">You can submit and be grade where submit page.</p>
-                            <p>You can see your grade that represent number of corrects and total</p>
-                            <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
-                            
-                        </div>
+                    <div class="col-md-6" style="text-align : center">
+                        <h3>Notice</h3>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card bg-default shadow border-0">
-                            <img src="@/assets/submit_image.png">
-                            <blockquote class="card-blockquote">
-                                <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 583 95"
-                                     class="svg-bg">
-                                    <polygon points="0,52 583,95 0,95" class="fill-default"></polygon>
-                                    <polygon points="0,42 583,95 683,0 0,95" opacity=".2" class="fill-default"></polygon>
-                                </svg>
-                                <h5 class="display-3 text-black">Grading System</h5>
-                                <p class="lead text-italic text-black">The Arctic Ocean freezes every winter and much of
-                                    the sea-ice then thaws every summer, and that process will continue whatever
-                                    happens.</p>
-                            </blockquote>
-                        </div>
+                    <div class="col-md-6" style="text-align : center">
+                        <h3>How to Use</h3>
                     </div>
-                    
                 </div>
             </div>
         </section>
+        <app-footer />
     </div>
 </template>
 <script>
-export default {};
+import AppFooter from './AppFooter.vue'
+import AppHeader from './AppHeader.vue'
+import StickyElement from 'vue-sticky-element'
+export default {
+  components: { AppHeader,  AppFooter,  StickyElement},
+  data: () => ({
+    scrollPosition: null,
+    select_component : 1,
+    selected_image: require('@/assets/solve_page.png'),
+    image_src : [
+        '@/assets/solve_page.png',
+        '@/assets/submit_image.png',
+        '@/assets/list.png'
+        ]
+
+  }),
+  methods: {
+    updateScroll() {
+        this.scrollPosition = window.scrollY
+    },
+    select(target) {
+        this.select_component = target
+        if(target == 1) this.selected_image = require('@/assets/solve_page.png')
+        else if(target == 2) this.selected_image = require('@/assets/submit_image.png')
+        else this.selected_image = require('@/assets/list.png')
+    }
+  },
+  mounted() {
+      window.addEventListener('scroll', this.updateScroll)
+  },
+  destroy() {
+      window.removeEventListener('scroll', this.updateScroll)
+  }
+}
 </script>
 <style lang="scss" scoped>
-.section {
-    min-height: 100vh;
-    padding-top: 5%;
-}
-.card {
-    position: relative;
-}
-
-.profile-page {
-    .card-profile {
-        margin-top: -150px;
-
-        .card-profile-image {
-            position: relative;
-            //min-height: 130px;
-
-            img {
-                max-width: 180px;
-                transform: translate(-50%,-30%);
-                position: absolute;
-                left: 50%;
-
-                &:hover {
-                    transform: translate(-50%, -33%);
-                }
-            }
-        }
-
-        .card-profile-stats {
-            padding: 1rem 0;
-
-            > div {
-                text-align: center;
-                margin-right: 1rem;
-                padding: .875rem;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-
-                .heading {
-                    font-size: 1.1rem;
-                    font-weight: bold;
-                    display: block;
-                }
-                .description {
-                    font-size: .875rem;
-                }
-            }
-        }
-
-        .card-profile-actions {
-            padding: .875rem;
-        }
-    }
-}
-
-// Card with blockquotes
-
-.card {
-    .card-blockquote {
-        padding: 2rem;
-        position: relative;
-
-        .svg-bg {
-            display: block;
-            width: 100%;
-            height: 95px;
-            position: absolute;
-            top: -94px;
-            left: 0;
-        }
-    }
-}
-
-// Animated cards
-
-.card-lift--hover {
-    &:hover {
-        transform: translateY(-20px);
-    }
-}
-.title1 { color: #2f7c5f; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: auto auto 3% 7%; }
-.title2 { color: #271972; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: auto auto 3% 7%; }
-
 .back1 {
-  background-image: linear-gradient(#ffffff 0%, rgb(63, 114, 161) 100%);
-  background-size:cover;
+    height: min-content;
 }
 .back2 {
-  background-image: linear-gradient(#ffffff 0%, rgb(85, 207, 136) 100%);
+    height: min-content;
+}
+.background {
+  min-height: min-content;
+  background-color: rgb(36,41,47);
   background-size:cover;
 }
 </style>

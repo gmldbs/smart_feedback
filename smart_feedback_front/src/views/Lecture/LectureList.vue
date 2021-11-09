@@ -22,27 +22,24 @@
       <div>
         <v-row class="ma-2">
           <v-col md="4" class="pa-3 d-flex flex-column" v-for="lecture in lectures" :key="lecture['.key']">
-            <v-card class="elevation-5 flex d-flex flex-column">
-              <v-card-text>
-                  <div>{{lecture.year}}년도 - {{lecture.semester}}학기</div>
-                  <p class="text-h4 text--primary">
-                    {{lecture.lecture_name}}
-                  </p>
-                  <p>Professor {{lecture.admin_name}}</p>
-                  <div class="text--primary">
-                    {{lecture.lecture_description}}
-                  </div>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn
-                    text
-                    color="teal accent-4"
-                    @click="openUpdateDialog(lecture)"
-                  >
-                    Update
-                  </v-btn>
-                </v-card-actions>
-            </v-card>
+            <v-hover v-slot="{ hover }" open-delay="30" close-delay="30">
+              <div style="border-top: 0.5px solid rgb(199,199,199);">
+                <button @click="openUpdateDialog(lecture)" style="text-align : left">
+                  <v-card class="card-design flex d-flex flex-column" :elevation="hover ? 5 : 0" :class="{ 'on-hover': hover }">
+                    <v-card-text>
+                        <div>{{lecture.year}}년도 - {{lecture.semester}}학기</div>
+                        <p class="text-h5 text--primary">
+                          {{lecture.lecture_name}}
+                        </p>
+                        <p>Professor {{lecture.admin_name}}</p>
+                        <div class="text--primary">
+                          {{lecture.lecture_description}}
+                        </div>
+                      </v-card-text>
+                  </v-card>
+                </button>
+              </div>
+            </v-hover>
           </v-col>
         </v-row>
       </div>
@@ -469,3 +466,8 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.card-design {
+  border-top : thick black;
+}
+</style>

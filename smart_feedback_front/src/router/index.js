@@ -4,9 +4,7 @@ import Home from '../views/Home.vue'
 import AppHeader from '../components/AppHeader.vue'
 import Login from '../views/Session/Login.vue'
 import SignUp from '../views/Session/SignUp.vue'
-import Submit from '../views/Problem/Submit.vue'
 import AppFooter from '../components/AppFooter.vue'
-import HomeHeader from '../components/HomeHeader.vue'
 import ManageProblem from '../views/Problem/ManageProblem.vue'
 import ProblemList from '../views/Problem/ProblemList.vue'
 import StudentProblemList from '../views/Problem/StudentProblemList.vue'
@@ -21,18 +19,7 @@ const routes = [
     path: '/',
     name: 'Home',
     components: {
-      header: HomeHeader,
-      default: Home,
-      footer: AppFooter
-    }
-  },
-  {
-    path: '/submit/:problem_id',
-    name: 'Submit',
-    components: {
-      header: AppHeader,
-      default: Submit,
-      footer: AppFooter
+      default: Home
     }
   },
   {

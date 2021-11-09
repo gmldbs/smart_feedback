@@ -1,41 +1,46 @@
 <template>
-  <div class="centered-container">
-    <md-content class="md-elevation-3">
+  <div>
+    <app-header/>
+    <div class="centered-container">
+      <md-content class="md-elevation-3">
 
-      <div class="title">
-        <img src="../../assets/skku_logo.png">
-        <div class="md-title">Login</div>
-      </div>
+        <div class="title">
+          <img src="../../assets/skku_logo.png">
+          <div class="md-title">Login</div>
+        </div>
 
-      <div class="form">
-        <md-field>
-          <label>E-mail</label>
-          <md-input v-model="email" autofocus></md-input>
-        </md-field>
+        <div class="form">
+          <md-field>
+            <label>E-mail</label>
+            <md-input v-model="email" autofocus></md-input>
+          </md-field>
 
-        <md-field md-has-password>
-          <label>Password</label>
-          <md-input v-model="password" type="password"></md-input>
-        </md-field>
-      </div>
+          <md-field md-has-password>
+            <label>Password</label>
+            <md-input v-model="password" type="password"></md-input>
+          </md-field>
+        </div>
 
-      <div class="actions md-layout md-alignment-center-space-between">
-        <a href="/signup">Don't have an account?</a>
-        <md-button class="md-raised md-primary" @click="login()">Log in</md-button>
-      </div>
+        <div class="actions md-layout md-alignment-center-space-between">
+          <a href="/signup">Don't have an account?</a>
+          <md-button class="md-raised md-primary" @click="login()">Log in</md-button>
+        </div>
 
-      <div class="loading-overlay" v-if="loading">
-        <md-progress-spinner md-mode="indeterminate" :md-stroke="2"></md-progress-spinner>
-      </div>
+        <div class="loading-overlay" v-if="loading">
+          <md-progress-spinner md-mode="indeterminate" :md-stroke="2"></md-progress-spinner>
+        </div>
 
-    </md-content>
-    <div class="background" />
+      </md-content>
+      <div class="background" />
+    </div>
   </div>
 </template>
 
 <script>
+import AppHeader from '../../components/AppHeader.vue';
 
 export default {
+  components: { AppHeader },
   name: "App",
   data() {
     return {

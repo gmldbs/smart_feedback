@@ -55,42 +55,6 @@
             </b-overlay>
           </section>
         </div>
-        <!--dashboard style="margin-top:0px;" :id="'dashExample'">
-          <dash-layout
-              v-for="layout in dlayouts"
-              v-bind="layout"
-              :key="layout.breakpoint"
-          >
-              <dash-item v-for="item in layout.items" v-bind.sync="item" :key="item.id">
-
-                  <b-container style="display: flex !important; flex-direction: column;" class="content" v-if="item.id == 1" >
-                      <div style="flex-grow: 1; overflow: auto;">
-                      <h6>Problem Discription</h6><br>
-                      <p style="text-color:white; margin : 10px;" v-html="problem_info.problem_discription"></p>
-                      </div>
-                  </b-container>
-                      
-                  <div class="content1" v-if="item.id == 2">
-                      <h6 style="margin:10px;">Write your code</h6>
-                      <hr style="margin:0px" />
-                      <prism-editor class="my-editor" v-model="code" line-numbers :highlight="highlighter"></prism-editor>
-                  </div>
-                  
-                  <div class="content2" v-if="item.id == 3">
-                      <b-overlay
-                          id="overlay-background"
-                          :show = overlay
-                          variant="secondary"
-                          rounded="sm"
-                          style="height:100%"
-                      >
-                      <h6 style="margin:10px;">Result</h6>
-                      <prism-editor class="my-editor" :readonly="true" v-model="result" line-numbers :highlight="highlighter"></prism-editor>
-                      </b-overlay>
-                  </div>
-              </dash-item>
-          </dash-layout>
-        </dashboard-->
       </b-tab>
     </b-tabs>
     </div>
@@ -153,11 +117,9 @@
 </template>
 
 <script>
-//import { Dashboard, DashLayout, DashItem } from "vue-responsive-dash";
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
 
-// import highlighting library (you can use any library you want just return html string)
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -165,10 +127,7 @@ import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 
 export default {
   components: {
-    PrismEditor,
-    //Dashboard,
-    //DashLayout,
-    //DashItem
+    PrismEditor
   },
   data: () => ({
     dialog: false,
@@ -180,70 +139,6 @@ export default {
     overlay: false,
     correct: 0,
     total: 0,
-    dlayouts: [
-        {
-          numberOfCols: 30,
-          breakpoint: "xl",
-          items: [
-            { id: "1", x: 0, y: 0, width: 12, height: 15 },
-            { id: "2", x: 12, y: 0, width: 18, height: 11 },
-            { id: "3", x: 12, y: 11, width: 18, height: 4 },
-          ]
-        },
-        {
-          breakpoint: "lg",
-          breakpointWidth: 1200,
-          numberOfCols: 30,
-          items: [
-            { id: "1", x: 0, y: 1, width: 12, height: 15 },
-            { id: "2", x: 12, y: 0, width: 18, height: 11 },
-            { id: "3", x: 12, y: 11, width: 18, height: 4 },
-          ]
-        },
-        {
-          breakpoint: "md",
-          breakpointWidth: 996,
-          numberOfCols: 30,
-          items: [
-            { id: "1", x: 0, y: 1, width: 12, height: 15 },
-            { id: "2", x: 12, y: 0, width: 18, height: 11 },
-            { id: "3", x: 12, y: 11, width: 18, height: 4 },
-          ]
-        },
-        {
-          breakpoint: "sm",
-          breakpointWidth: 768,
-          numberOfCols: 4,
-          items: [
-            { id: "1", x: 0, y: 0, width: 1, height: 1 },
-            { id: "2", x: 1, y: 0, width: 2, height: 1 },
-          ]
-        },
-        {
-          breakpoint: "xs",
-          breakpointWidth: 480,
-          numberOfCols: 2,
-          items: [
-            { id: "1", x: 0, y: 0, width: 1, height: 1 },
-            { id: "2", x: 1, y: 0, width: 1, height: 1 },
-          ]
-        },
-        {
-          breakpoint: "xxs",
-          breakpointWidth: 0,
-          numberOfCols: 1,
-          items: [
-            {
-              id: "1",
-              x: 0,
-              y: 0,
-              width: 1,
-              height: 1
-            },
-            { id: "2", x: 0, y: 1, width: 1, height: 1 }
-          ]
-        }
-      ],
   }),
   firestore () {
     return {
@@ -376,16 +271,6 @@ div.my_class {
     margin: 10px;
     height: 100%;
 }
-/*
-.content_grid {
-    display: grid;
-    min-height: calc(100vh - 138px);
-    max-height: calc(100vh - 138px);
-    grid-template: 
-    "div head" min-content
-    "div main" 1fr / min-content 1fr;
-}
-*/
 .content_grid {
     display: grid;
     min-height: calc(100vh - 145px);

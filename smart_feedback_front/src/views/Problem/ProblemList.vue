@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <app-header/>
   <v-container>
       <v-row justify="end">
         <v-col
@@ -16,6 +18,7 @@
           <v-btn color="primary" @click="openCreateDialog()">Add problem</v-btn>
         </v-col>
       </v-row>
+      <hr>
       <v-card>
             <v-card-title>
             <v-text-field
@@ -250,10 +253,13 @@
         </v-dialog>
     </v-row>
   </v-container>
+  </div>
 </template>
 
 <script>
+import AppHeader from '../../components/AppHeader.vue'
 export default {
+  components: { AppHeader },
   data: () => ({
     search: '',
     reference_search: '',

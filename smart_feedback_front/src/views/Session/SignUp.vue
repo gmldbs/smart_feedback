@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <app-header/>
   <div class="centered-container">
     <md-content class="md-elevation-3">
       <div class="title">
@@ -54,10 +56,13 @@
     </md-content>
     <div class="background" />
   </div>
+  </div>
 </template>
 
 <script>
+import AppHeader from '../../components/AppHeader.vue';
 export default {
+  components: { AppHeader },
   name: "SignUP",
   data() {
     return {

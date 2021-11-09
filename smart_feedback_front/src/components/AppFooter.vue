@@ -9,17 +9,6 @@
                         Hee Yoon Jung & SKKU
                     </div>
                 </div>
-                <!--div class="col-md-6">
-                    <ul class="nav nav-footer justify-content-end">
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com" class="nav-link" target="_blank" rel="noopener">Creative Tim</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com/presentation" class="nav-link" target="_blank" rel="noopener">About
-                                Us</a>
-                        </li>
-                    </ul>
-                </div-->
             </div>
         </div>
     </footer>
