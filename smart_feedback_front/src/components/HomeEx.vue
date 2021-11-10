@@ -57,9 +57,9 @@
                                 >
                                     <v-card-text :style="select_component == 1 ? 'color:black' : 'color:grey'">
                                         <h3>Writing code & Submit</h3>
-                                        <p class="lead">You can submit and be grade where submit page.</p>
-                                        <p>You can see your grade that represent number of corrects and total</p>
-                                        <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
+                                        <p class="lead">You can write code & submit where problem solve page.</p>
+                                        <p>You can see code highlight in most language.</p>
+                                        <p>You can suggest about this function <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
                                     </v-card-text>
                                 </v-card>
                                 </button>
@@ -74,7 +74,8 @@
                                 >
                                     <v-card-text :style="select_component == 2 ? 'color:black' : 'color:grey'">
                                         <h3>Grading & Feedback</h3>
-                                        <p class="lead">You can submit and be grade where submit page.</p>
+                                        <p class="lead">grade and get feedback where problem solve page & problem list page.</p>
+                                        <p>You can see your repair code when submit or professor publish students' feedback.</p>
                                         <p>You can see your grade that represent number of corrects and total</p>
                                         <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
                                     </v-card-text>
@@ -91,9 +92,9 @@
                                 >
                                     <v-card-text :style="select_component == 3 ? 'color:black' : 'color:grey'">
                                         <h3>Manage Lectures & Problems</h3>
-                                        <p class="lead">You can submit and be grade where submit page.</p>
-                                        <p>You can see your grade that represent number of corrects and total</p>
-                                        <p>You can complain about your score <a href="#" class="font-weight-bold text-warning mt-5">in here</a></p>
+                                        <p class="lead">Professor can create & manage Lectures & Problems.</p>
+                                        <p>Professor can manage students' feedback in manage problems page.</p>
+                                        <p>If you have any question about this function, <a href="#" class="font-weight-bold text-warning mt-5">refer here</a></p>
                                     </v-card-text>
                                 </v-card>
                                 </button>
@@ -144,7 +145,7 @@ export default {
     image_src : [
         '@/assets/solve_page.png',
         '@/assets/submit_image.png',
-        '@/assets/list.png'
+        '@/assets/manage.png'
         ]
 
   }),
@@ -155,8 +156,8 @@ export default {
     select(target) {
         this.select_component = target
         if(target == 1) this.selected_image = require('@/assets/solve_page.png')
-        else if(target == 2) this.selected_image = require('@/assets/submit_image.png')
-        else this.selected_image = require('@/assets/list.png')
+        else if(target == 2) this.selected_image = require('@/assets/feedback.png')
+        else this.selected_image = require('@/assets/manage.png')
     }
   },
   mounted() {
