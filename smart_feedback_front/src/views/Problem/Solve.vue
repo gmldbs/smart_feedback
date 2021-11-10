@@ -83,15 +83,27 @@
                 three-line
                 subheader
                 >
-                <v-subheader>Feedback Information</v-subheader>
+                <v-subheader>Feedback Information
+                  <v-select
+                    :items="items"
+                    item-text="name"
+                    item-value="value"
+                    v-model="outputFormat"
+                    label="Feedback Type"
+                    style="max-width: 15%; margin-left:30px; margin-top:20px;"
+                  ></v-select>
+                </v-subheader>
                 <v-list-item>
                     <v-list-item-content style="height:100%">
                         <h6>Your grade : {{correct}} / {{total}}</h6>
-                        <h6>Origin Your Code </h6>
-                        <prism-editor style="height:100%; margin-bottom:5%;" class="my-editor" v-model="feedback_data['Buggy Code']" line-numbers :highlight="highlighter"></prism-editor>
                         <h6>Repair Code grade : {{feedback_data['#Passed Test Case']}} / {{feedback_data['#Test Case']}}</h6>
-                        <h6>Repair Code </h6>
-                        <prism-editor style="height:100%" class="my-editor" v-model="feedback_data['Repair']" line-numbers :highlight="highlighter"></prism-editor>
+                        <code-diff
+                        :old-string="feedback_data['Buggy Code']"
+                        :new-string="feedback_data['Repair']"
+                        :outputFormat="outputFormat"
+                        :context = "context"
+                        style="margin-top:30px;"
+                        />
                     </v-list-item-content>
                 </v-list-item>
                 </v-list>
@@ -139,6 +151,12 @@ export default {
     overlay: false,
     correct: 0,
     total: 0,
+    items : [
+      {name: 'Line by Line', value: 'line-by-line'},
+      {name: 'Side by Side', value: 'side-by-side'}
+      ],
+    outputFormat : 'line-by-line',
+    context: 20
   }),
   firestore () {
     return {
