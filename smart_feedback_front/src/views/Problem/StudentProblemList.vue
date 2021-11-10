@@ -11,20 +11,19 @@
         <p v-else>{{Object.keys(problem.grade).length}}명 완료</p>
         </button>
         <br>
+        <p v-if="problem != undefined && problem['grade'] != undefined && problem['grade'][$store.state.student_id] != undefined">성적 : {{problem['grade']['2016312568']}}</p>
         <v-btn v-if="problem.feedback != undefined && problem.feedback[$store.state.student_id] != undefined" @click="openFeedbackDialog(problem)">피드백 확인</v-btn>
       </div>
     <v-row justify="center">
         <v-dialog
         v-model="Feedback_dialog"
-        fullscreen
         hide-overlay
-        transition="dialog-bottom-transition"
         >
         <v-overlay :value="Feedback_overlay"></v-overlay>
         <v-card>
             <v-toolbar
             dark
-            color="teal"
+            color="rgb(36,41,47)"
             >
             <v-btn
               icon
@@ -36,60 +35,31 @@
             <v-toolbar-title>{{selected_problem.problem_name}}</v-toolbar-title>
             </v-toolbar>
             <v-list
+            style="margin-top:30px;"
             three-line
             subheader
             >
-            <v-subheader>Problem Discription</v-subheader>
-            <v-list-item>
-                <v-list-item-content>
-                    <p v-html="selected_problem.problem_discription"></p>
-                </v-list-item-content>
-            </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list
-            three-line
-            subheader
-            >
-            <v-subheader>Your code</v-subheader>
+            <v-subheader>Feedback Info 
+              <v-select
+                :items="items"
+                item-text="name"
+                item-value="value"
+                v-model="outputFormat"
+                label="Feedback Type"
+                style="max-width: 15%; margin-left:30px; margin-top:20px;"
+              ></v-select>
+            </v-subheader>
             <b-container>
                 <b-row>
-                <b-col sm="2" style="text-align: center">
-                    <label for="textarea-auto-height">Your code:</label>
-                </b-col>
-                <b-col sm="10">
-                    <b-form-textarea
-                    id="textarea-auto-height"
-                    placeholder="Write your code"
-                    rows="20"
-                    max-rows="20"
-                    v-model="repair_info.origin_code"
-                    disabled
-                    ></b-form-textarea>
-                </b-col>
+                    <p>Origin code grade :  {{grade}}</p>
+                    <p>Repair code grade :  11/11</p>
                 </b-row>
-
-                <b-row>
-                <b-col sm="2" style="text-align: center">
-                    <label for="textarea-auto-height">Repair code:</label>
-                </b-col>
-                <b-col sm="10">
-                    <b-form-textarea
-                    id="textarea-auto-height"
-                    placeholder="Write your code"
-                    rows="20"
-                    max-rows="20"
-                    v-model="repair_info.repair_code"
-                    disabled
-                    ></b-form-textarea>
-                </b-col>
-                </b-row>
-
-                <b-row>
-                    <p>Origin code grade :  {{repair_info.num_correct}}/{{repair_info.num_total}}</p>
-                    <p>Repair code grade :  {{grade}}</p>
-                </b-row>
-
+                <code-diff
+                  :old-string="origin_code"
+                  :new-string="feedback_code"
+                  :outputFormat="outputFormat"
+                  :context = "context"
+                  />
             </b-container>
             </v-list>
         </v-card>
@@ -102,11 +72,13 @@
 </template>
 
 <script>
+import {CodeDiff} from 'v-code-diff'
 export default {
-    inject: { $item: { default: null } },
+  inject: { $item: { default: null } },
   props: {
     itemId: { type: [Number, String] }
   },
+  components: {CodeDiff},
   computed: {
     itemByinject() {
       if (this.$item) {
@@ -162,8 +134,15 @@ export default {
     },
     code: '',
     result: '',
-    repair_info: {},
+    feedback_code: '',
+    origin_code: '',
     grade : '',
+    items : [
+      {name: 'Line by Line', value: 'line-by-line'},
+      {name: 'Side by Side', value: 'side-by-side'}
+      ],
+    outputFormat : 'line-by-line',
+    context: 20
   }),
   firestore () {
     return {
@@ -202,9 +181,10 @@ export default {
         console.log(problem)
       this.Feedback_dialog= true
       this.selected_problem = problem
-      this.repair_info = this.selected_problem['feedback'][this.$store.state.student_id]
-      this.repair_info['origin_code'] = this.repair_info['origin_code'].split('<br/>').join('\n')
-      this.repair_info['repair_code'] = this.repair_info['repair_code'].split('<br/>').join('\n')
+      this.feedback_code = this.selected_problem['feedback'][this.$store.state.student_id]
+      this.origin_code = this.selected_problem['student_code'][this.$store.state.student_id]
+      //this.repair_info['origin_code'] = this.repair_info['origin_code'].split('<br/>').join('\n')
+      //this.repair_info['repair_code'] = this.repair_info['repair_code'].split('<br/>').join('\n')
       this.grade = this.selected_problem['grade'][this.$store.state.student_id]
     },
     closeFeedbackDialog() {

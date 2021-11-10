@@ -21,6 +21,10 @@ import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import VStickyElement from 'vue-sticky-element'
+import CodeDiff from 'v-code-diff'
+
+import 'vue-diff/dist/index.css'
+
 //import 'firebase/firestore'
 const firebaseConfig = {
   apiKey: "AIzaSyCyP12_GNBAc7JM2dKoCumP2qsqNNGwotE",
@@ -40,6 +44,7 @@ Vue.use(VueFirestore)
 Vue.use(VueLazyload)
 Vue.use(CKEditor)
 Vue.use(VStickyElement)
+Vue.use(CodeDiff)
 Vue.component('PrismEditor', PrismEditor);
 Vue.component('AppHeader', AppHeader);
 Vue.component('AppFooter', AppFooter);
